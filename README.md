@@ -1,11 +1,13 @@
-# AzureOrphanResourcesCheck
+# AzureActivityLogsCheck
   
 ## Why this function app ?
-This function app automatically checks if you have orphan resources or non enabled hybrid use benefits on specified subscription.  
+This function app automatically checks if you have users actions on Azure resources using activity logs API query on a given subscription.  
   
-You can also specify exception if you explicitely don't want to check specific resources.  
-  
-Coupled with a common monitoring system (nagios, centreon, zabbix, or whatever you use), you'll automatically get alerted as soon as a virtual machine is not protected as it should be.  
+You can exclude specific resource group(s) and/or type of operations in activity logs.  
+
+The purpose is to identify if anybody made MANUAL write or delete operations on your resources instead of going through IaC and CI/CD pipelines.
+
+Coupled with a common monitoring system (nagios, centreon, zabbix, or whatever you use), you'll automatically get alerted as soon as a there is a modification made by user.  
 </br>
 </br>
 
@@ -18,13 +20,13 @@ Coupled with a common monitoring system (nagios, centreon, zabbix, or whatever y
 ## Installation
 Once you have all the requirements, you can deploy the Azure function with de "Deploy" button below:  
   
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmatoy%2FAzureOrphanResourcesCheck%2Fmain%2Farm-template%2FAzureOrphanResourcesCheck.json) [![alt text](http://armviz.io/visualizebutton.png)](http://armviz.io/#/?load=https://raw.githubusercontent.com/matoy/AzureOrphanResourcesCheck/main/arm-template/AzureOrphanResourcesCheck.json)  
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmatoy%2FAzureActivityLogsCheck%2Fmain%2Farm-template%2FAzureActivityLogsCheck.json) [![alt text](http://armviz.io/visualizebutton.png)](http://armviz.io/#/?load=https://raw.githubusercontent.com/matoy/AzureActivityLogsCheck/main/arm-template/AzureActivityLogsCheck.json)  
   
 </br>
 This will deploy an Azure app function with its storage account, app insights and "consumption" app plan.  
 A keyvault will also be deployed to securely store the secret of your app principal.  
   
-![alt text](https://github.com/matoy/AzureOrphanResourcesCheck/blob/main/img/screenshot1.png?raw=true)  
+![alt text](https://github.com/matoy/AzureActivityLogsCheck/blob/main/img/screenshot1.png?raw=true)  
   
 Choose you Azure subscription, region and create or select a resource group.  
   
@@ -46,10 +48,14 @@ For testing, you can leave it like it.
 For more serious use, I would advise you host your own zip file so that you wouldn't be subject to release changes done in this repository.  
 See below for more details.  
   
-* Global Exceptions:  
-There are some resources that you might not want to check.  
+* Resource group exceptions:  
+Resource group(s) you want to exclude from the check on a global basis. 
 You can specify comma separated names.  
   
+* Operation exceptions:  
+Type of operation (in activity logs) you want to exclude from the check on a global basis. 
+You can specify comma separated names.  
+
 * Signature:  
 When this function will be called by your monitoring system, you likely might forget about it.  
 The signature output will act a reminder since you'll get it in the results to your monitoring system.  
@@ -62,9 +68,9 @@ Trigger it manually in your favorite browser and eventually look at the logs in 
 After you execute the function for the first time, it might (will) need 5-10 minutes before it works because it has to install Az module. You even might get an HTTP 500 error. Give the function some time to initialize, re-execute it again if necessary and be patient, it will work.  
   
 Even after that, you might experience issue if Azure takes time to resolve your newly created keyvault:  
-![alt text](https://github.com/matoy/AzureOrphanResourcesCheck/blob/main/img/kv-down.png?raw=true)  
+![alt text](https://github.com/matoy/AzureActivityLogsCheck/blob/main/img/kv-down.png?raw=true)  
 Wait a short time and then restart your Azure function, your should have something like:  
-![alt text](https://github.com/matoy/AzureOrphanResourcesCheck/blob/main/img/kv-up.png?raw=true)  
+![alt text](https://github.com/matoy/AzureActivityLogsCheck/blob/main/img/kv-up.png?raw=true)  
 </br>
 </br>
 
@@ -82,12 +88,12 @@ You can also specify comma separated resource names to exclude with &exclusions=
 Be sure to have an appropriate timeout (30s or more) because if you have many resources, the function might need some time to execute.  
   
 This is an example of what you'd get in Centreon:  
-![alt text](https://github.com/matoy/AzureOrphanResourcesCheck/blob/main/img/screenshot2.png?raw=true)  
+![alt text](https://github.com/matoy/AzureActivityLogsCheck/blob/main/img/screenshot2.png?raw=true)  
 </br>
 </br>
 
 ## How to stop relying on this repository's zip  
 To make your function to stop relying on this repo's zip and become independant, follow these steps:  
 * remove zipReleaseURL app setting and restart app  
-* in "App files" section, edit "requirements.psd1" and uncomment the line: 'Az' = '6.*'  
-* in "Functions" section, add a new function called "AzureOrphanResourcesCheck" and paste in it the content of the file release/AzureOrphanResourcesCheck/run.ps1 in this repository  
+* in "App files" section, edit "requirements.psd1" and uncomment the line: 'Az' = '7.*'  
+* in "Functions" section, add a new function called "AzureActivityLogsCheck" and paste in it the content of the file release/AzureActivityLogsCheck/run.ps1 in this repository  
