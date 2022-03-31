@@ -52,7 +52,7 @@
 	  }
     },
 	"DaysToLookBack": {
-      "type": "int",
+      "type": "string",
       "defaultValue": "7",
       "metadata": {
         "description": "Number of days to look back in activity logs"
