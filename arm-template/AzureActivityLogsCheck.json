@@ -46,7 +46,7 @@
     },
 	"AzureOperationGlobalExceptions": {
       "type": "string",
-      "defaultValue": "Microsoft.Authorization/locks/delete,Microsoft.Authorization/locks/write",
+      "defaultValue": "Microsoft.Authorization/locks/delete,Microsoft.Authorization/locks/write,Microsoft.Authorization/policyExemptions/write",
       "metadata": {
         "description": "Global operation exceptions valid without having to specify in GET parameter"
 	  }
