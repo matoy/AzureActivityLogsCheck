@@ -68,6 +68,9 @@ $securePassword = ConvertTo-SecureString -String $password -AsPlainText -Force
 $credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $applicationId, $securePassword
 Connect-AzAccount -Credential $credential -Tenant $tenantId -ServicePrincipal
 
+# logs
+Write-Host "tenantId: $tenantId`napplicationId: $applicationId`nsubscriptionid: $subscriptionid`nnumberOfDays: $numberOfDays`exclusionRgTab: $exclusionRgTab`nexclusionOperationTab: $exclusionOperationTab
+
 # get token
 $azContext = Get-AzContext
 $azProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
