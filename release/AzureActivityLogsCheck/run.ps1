@@ -107,8 +107,7 @@ Try {
 }
 Catch {
     if($_.ErrorDetails.Message) {
-		$msg = ($_.ErrorDetails.Message | ConvertFrom-Json).error
-		$out = "CRITICAL - $($msg.code): $($msg.message)"
+		$out = "CRITICAL - $($_.ErrorDetails.Message)"
     }
 }
 
