@@ -87,6 +87,7 @@ Try {
 	$dateStart = (Get-Date).AddDays(-$numberOfDays).ToString("yyyy-MM-dd")
 	$dateEnd = (Get-Date).ToString("yyyy-MM-dd")
 	$filter = "eventTimestamp ge '$($dateStart)T00:00:00Z' and eventTimestamp le '$($dateEnd)T23:59:59Z' and status eq 'Succeeded'"
+	Write-Host $filter
 	$uri = "https://management.azure.com/subscriptions/$subscriptionid/providers/Microsoft.Insights/eventtypes/management/values?api-version=2015-04-01&`$filter=$filter"
 	$results = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
 	$logs += $results.value | where {$exclusionRgTab -notcontains $_.resourceGroupName -and $_.caller -like "*@*" -and $exclusionOperationTab -notcontains $_.operationName.value -and ($_.operationName.value -like "*write" -or $_.operationName.value -like "*delete")}
@@ -95,6 +96,7 @@ Try {
 			$results = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
 			$logs += $results.value | where {$exclusionRgTab -notcontains $_.resourceGroupName -and $_.caller -like "*@*" -and $exclusionOperationTab -notcontains $_.operationName.value -and ($_.operationName.value -like "*write" -or $_.operationName.value -like "*delete")}
 	}
+	Write-Host "logs count: $($logs.count)"
 	if ($logs.count -eq 0) {
 		$out = "OK - No manual activity log found`n"
 	}
