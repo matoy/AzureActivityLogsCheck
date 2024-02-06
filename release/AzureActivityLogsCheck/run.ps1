@@ -69,7 +69,7 @@ $credential = new-object -typename System.Management.Automation.PSCredential -ar
 Connect-AzAccount -Credential $credential -Tenant $tenantId -ServicePrincipal
 
 # logs
-Write-Host "tenantId: $tenantId`napplicationId: $applicationId`nsubscriptionid: $subscriptionid`nnumberOfDays: $numberOfDays`exclusionRgTab: $exclusionRgTab`nexclusionOperationTab: $exclusionOperationTab
+Write-Host "tenantId: $tenantId`napplicationId: $applicationId`nsubscriptionid: $subscriptionid`nnumberOfDays: $numberOfDays`nexclusionRgTab: $exclusionRgTab`nexclusionOperationTab: $exclusionOperationTab"
 
 # get token
 $azContext = Get-AzContext
